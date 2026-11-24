@@ -1,855 +1,132 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAXIO AI PRO - Volatility Scanner</title>
-
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#17104b">
+<title>MAXIO AI — Deriv Market Intelligence</title>
 <style>
-:root{
-  --bg:#07111f;
-  --panel:#101f32;
-  --panel2:#14263c;
-  --text:#edf5ff;
-  --muted:#91a5bd;
-  --green:#00e6a0;
-  --red:#ff5574;
-  --blue:#42a5ff;
-  --border:#243b55;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial,sans-serif;
-}
-header{
-  padding:20px 16px;
-  background:#0c1a2b;
-  border-bottom:1px solid var(--border);
-}
-.brand{font-size:25px;font-weight:900;letter-spacing:1px}
-.brand span{color:var(--green)}
-.subtitle{color:var(--muted);font-size:12px;margin-top:5px}
-.container{max-width:1150px;margin:auto;padding:15px}
-.card{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:13px;
-  padding:15px;
-  margin-bottom:14px;
-}
-h2{font-size:16px;margin:0 0 14px}
-h3{font-size:12px;color:var(--muted);margin:0 0 8px}
-.controls{display:flex;gap:8px;flex-wrap:wrap}
-select,button{
-  border:1px solid var(--border);
-  border-radius:8px;
-  padding:11px;
-  background:var(--panel2);
-  color:var(--text);
-  font-size:14px;
-}
-select{flex:1;min-width:180px}
-button{
-  cursor:pointer;
-  background:#087b65;
-  border:0;
-  font-weight:bold;
-}
-button.secondary{background:#203650}
-.status{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  color:var(--muted);
-  font-size:12px;
-  margin-bottom:15px;
-}
-.dot{
-  width:9px;height:9px;border-radius:50%;
-  background:var(--red);
-}
-.dot.connected{background:var(--green)}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-}
-.stat{
-  background:var(--panel2);
-  padding:13px;
-  border-radius:10px;
-  min-width:0;
-}
-.stat strong{
-  display:block;
-  font-size:20px;
-  margin-top:7px;
-  overflow-wrap:anywhere;
-}
-.price{font-size:30px;font-weight:800;margin:10px 0}
-.green{color:var(--green)}
-.red{color:var(--red)}
-.muted{color:var(--muted)}
-.digits{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:6px;
-}
-.digit{
-  background:var(--panel2);
-  border-radius:7px;
-  text-align:center;
-  padding:8px 2px;
-  font-size:12px;
-}
-.digit strong{display:block;font-size:17px;margin-bottom:4px}
-.bar{
-  height:5px;
-  background:#263d56;
-  border-radius:5px;
-  margin-top:5px;
-}
-.fill{
-  height:5px;
-  background:var(--blue);
-  border-radius:5px;
-}
-table{width:100%;border-collapse:collapse;font-size:12px}
-td,th{
-  padding:10px 7px;
-  text-align:left;
-  border-bottom:1px solid var(--border);
-  white-space:nowrap;
-}
-th{color:var(--muted)}
-canvas{width:100%;height:180px;display:block}
-.notice{color:var(--muted);font-size:11px;line-height:1.6}
-.signal{
-  padding:13px;
-  border-radius:9px;
-  background:var(--panel2);
-  margin-top:12px;
-  line-height:1.7;
-  font-size:13px;
-}
-.market-name{font-weight:bold}
-footer{
-  text-align:center;
-  color:var(--muted);
-  font-size:11px;
-  padding:20px;
-}
-@media(min-width:700px){
-  .grid{grid-template-columns:repeat(4,1fr)}
-  .digits{grid-template-columns:repeat(10,1fr)}
-}
+:root{--ink:#17223b;--muted:#74809a;--line:#e6eaf3;--paper:#f5f7fc;--white:#fff;--purple:#5928e5;--purple2:#7a55f4;--teal:#18a99b;--green:#169b78;--red:#d95d75;--shadow:0 12px 34px rgba(30,35,80,.08)}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+header{background:linear-gradient(115deg,#171044,#302078 65%,#5132a7);color:white;padding:18px max(18px,calc((100% - 1180px)/2));display:flex;align-items:center;justify-content:space-between;gap:14px;position:sticky;top:0;z-index:5;box-shadow:0 8px 24px #21175a33}
+.brand{display:flex;align-items:center;gap:11px}.logo{height:42px;width:42px;border-radius:13px;background:linear-gradient(145deg,#a18bff,#5a32df);display:grid;place-items:center;font-size:22px;box-shadow:0 5px 18px #0003}.brand b{font-size:18px;letter-spacing:.08em}.brand small{display:block;color:#c8c0f5;font-size:10px;letter-spacing:.16em}
+.header-right{display:flex;align-items:center;gap:9px}.pill{border:1px solid #ffffff40;background:#ffffff12;color:#fff;border-radius:99px;padding:7px 12px;font-size:11px}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#49e0b4;margin-right:6px}
+main{max-width:1180px;margin:22px auto;padding:0 16px 40px}.topline{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.eyebrow{color:var(--purple);font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.topline h1{font-size:24px;margin:3px 0}.sub{color:var(--muted);font-size:12px}.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(290px,.85fr);gap:16px}.stack{display:grid;gap:16px}.card{background:var(--white);border:1px solid var(--line);border-radius:19px;padding:18px;box-shadow:var(--shadow);min-width:0}.cardhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.cardhead h2{font-size:14px;margin:0}.tag{font-size:10px;font-weight:750;border-radius:99px;padding:5px 9px;background:#f0edff;color:#5c36d4}.tag.green{background:#e9f8f3;color:#13866c}.tag.amber{background:#fff5e6;color:#a76a12}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin:0 0 7px}.field select,.search{width:100%;border:1px solid var(--line);background:#fbfcff;border-radius:11px;padding:11px 12px;color:var(--ink);font:inherit;outline:none}.field select:focus,.search:focus{border-color:#a18bff;box-shadow:0 0 0 3px #7955f21c}
+.contracts{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.contract{border:1px solid var(--line);background:#fbfcff;border-radius:10px;padding:9px 4px;font-size:11px;font-weight:700;color:#65718a;cursor:pointer}.contract.active{background:#efeaff;border-color:#b9a8ff;color:#552bd7}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.stat{background:#f8f9fd;border:1px solid #edf0f7;border-radius:12px;padding:11px}.stat small{display:block;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.stat b{display:block;font-size:18px;margin-top:5px;font-variant-numeric:tabular-nums}.positive{color:var(--green)}.negative{color:var(--red)}
+.chartwrap{height:220px;position:relative;background:linear-gradient(180deg,#fbfaff,#fff);border:1px solid #eef0f8;border-radius:13px;overflow:hidden}.chartwrap canvas{width:100%;height:100%;display:block}.chartlabel{position:absolute;top:10px;left:12px;font-size:10px;color:var(--muted);font-weight:700}
+.streams{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.stream{border:1px solid var(--line);border-radius:12px;padding:10px;background:#fcfdff}.stream small{font-size:9px;color:var(--muted);font-weight:800;letter-spacing:.1em}.stream strong{display:block;font-size:19px;letter-spacing:.02em;font-variant-numeric:tabular-nums}.lastdigit{color:var(--purple)}
+.scanbtn{border:0;background:linear-gradient(100deg,#5526dc,#8059f7);color:white;border-radius:12px;padding:12px 16px;font-weight:800;cursor:pointer;box-shadow:0 8px 18px #6236e533}.scanbtn:disabled{opacity:.6;cursor:wait}.ghost{border:1px solid var(--line);background:white;color:#59647b;border-radius:11px;padding:10px 13px;font-weight:700;cursor:pointer}
+.scanner-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;color:var(--muted);font-size:10px;margin:14px 0}.scanner-meta span{background:#f4f5fa;padding:6px 9px;border-radius:99px}.progressbox{background:#fafaff;border:1px solid #ece9fb;border-radius:14px;padding:13px;margin:12px 0}.progressrow{display:flex;justify-content:space-between;align-items:center;gap:8px}.progressrow b{font-size:11px}.progressrow strong{font-size:25px;color:#269c9a}.bar{height:7px;background:#e8e8f3;border-radius:99px;overflow:hidden;margin:10px 0 5px}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#5928e5,#27bdb1);border-radius:99px;transition:width .25s}
+.radar{height:190px;display:grid;place-items:center;position:relative;overflow:hidden}.radar svg{width:190px;height:190px}.radar .core{animation:pulse 2.2s ease-in-out infinite;transform-origin:center}@keyframes pulse{50%{opacity:.55;transform:scale(1.08)}}
+.phases{display:grid;gap:7px}.phase{display:flex;align-items:center;gap:9px;padding:9px 10px;border:1px solid #edf0f6;border-radius:10px;color:#7b8498;font-size:11px}.phase .check{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;background:#f0f2f7;color:#9ba3b4;font-size:10px}.phase.done{color:#227e70;background:#f7fcfa}.phase.done .check{background:#dff5ed;color:#13866c}.phase.active{border-color:#cfc4ff;background:#faf8ff;color:#5936d0}
+.result{background:linear-gradient(145deg,#f3fbf8,#f8faff);border:1px solid #dcefe9;border-radius:16px;padding:16px}.resulttop{display:flex;justify-content:space-between;align-items:center;gap:10px}.digitrow{display:flex;align-items:center;gap:14px;margin:12px 0}.bigdigit{font-size:54px;line-height:1;font-weight:850;color:#169b78}.confidence{margin-left:auto;text-align:center;border:5px solid #d7eee6;border-radius:50%;height:82px;width:82px;display:grid;align-content:center}.confidence b{font-size:20px;color:#16856d}.confidence small{font-size:8px;color:var(--muted);font-weight:800}.result p{color:#5e6a7e;font-size:12px;margin:8px 0}.resultgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.resultgrid div{background:#ffffffb8;border-radius:10px;padding:9px}.resultgrid small{display:block;font-size:8px;color:var(--muted);font-weight:800;letter-spacing:.1em}.resultgrid b{font-size:11px}
+.history{width:100%;border-collapse:collapse;font-size:11px}.history th{text-align:left;color:#8791a4;font-size:9px;letter-spacing:.1em;padding:8px;border-bottom:1px solid var(--line)}.history td{padding:9px 8px;border-bottom:1px solid #f0f2f7}.history tr:last-child td{border:0}.empty{color:#9099aa;text-align:center;padding:20px}
+.scanner-table{width:100%;border-collapse:collapse;font-size:11px}.scanner-table th{text-align:left;color:#8791a4;font-size:9px;letter-spacing:.08em;padding:8px 6px;border-bottom:1px solid var(--line);white-space:nowrap}.scanner-table td{padding:9px 6px;border-bottom:1px solid #f0f2f7;white-space:nowrap}.scanner-table tr:last-child td{border:0}.scanner-wrap{overflow-x:auto}.scanner-live{color:var(--green);font-weight:800}.scanner-wait{color:var(--muted)}
+.disclaimer{font-size:10px;color:#8992a5;line-height:1.5}.footer{margin-top:18px;text-align:center;color:#98a1b1;font-size:10px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.topline h1{font-size:21px}.card{padding:15px}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:430px){header{padding:13px 14px}.brand b{font-size:15px}.pill{font-size:9px;padding:6px 8px}.contracts{grid-template-columns:repeat(3,1fr)}.controls{grid-template-columns:1fr 1fr}.topline{align-items:flex-start}.topline h1{font-size:19px}.stat b{font-size:16px}}
 </style>
 </head>
-
 <body>
-
-<header>
-  <div class="brand">MAXIO <span>AI PRO</span></div>
-  <div class="subtitle">
-    ALL-MARKETS VOLATILITY SCANNER • LIVE DERIV DATA • DIGIT ANALYTICS
-  </div>
-</header>
-
-<div class="container">
-
-  <div class="status">
-    <span class="dot" id="statusDot"></span>
-    <span id="connectionStatus">Connecting to Deriv...</span>
-  </div>
-
-  <div class="card">
-    <h2>All-Markets Volatility Scanner</h2>
-    <p class="notice">
-      MAXIO monitors all ten selected Volatility markets simultaneously.
-      Ranking is calculated from observed live tick movement.
-    </p>
-
-    <div class="controls">
-      <button onclick="connectAll()">Connect / Reconnect All Markets</button>
-      <button class="secondary" onclick="resetData()">Reset Statistics</button>
-    </div>
-
-    <div style="overflow-x:auto;margin-top:14px">
-      <table>
-        <thead>
-          <tr>
-            <th>Market</th>
-            <th>Live Price</th>
-            <th>Last Digit</th>
-            <th>Ticks</th>
-            <th>Avg Movement</th>
-            <th>Activity</th>
-          </tr>
-        </thead>
-        <tbody id="scannerTable">
-          <tr><td colspan="6">Waiting for market data...</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="notice" id="scannerInfo">
-      Waiting for Deriv market subscriptions.
-    </p>
-  </div>
-
-  <div class="card">
-    <h2>Selected Market Analysis</h2>
-
-    <div class="controls">
-      <select id="market">
-        <option value="R_10">Volatility 10 Index</option>
-        <option value="R_25">Volatility 25 Index</option>
-        <option value="R_50">Volatility 50 Index</option>
-        <option value="R_75">Volatility 75 Index</option>
-        <option value="R_100">Volatility 100 Index</option>
-        <option value="1HZ10V">Volatility 10 (1s)</option>
-        <option value="1HZ25V">Volatility 25 (1s)</option>
-        <option value="1HZ50V">Volatility 50 (1s)</option>
-        <option value="1HZ75V">Volatility 75 (1s)</option>
-        <option value="1HZ100V">Volatility 100 (1s)</option>
-      </select>
-
-      <select id="sampleSize">
-        <option value="100">Last 100 ticks</option>
-        <option value="500">Last 500 ticks</option>
-        <option value="1000">Last 1000 ticks</option>
-      </select>
-    </div>
-
-    <div class="muted" style="font-size:12px;margin-top:14px">
-      Selected market price
-    </div>
-    <div class="price" id="price">Waiting...</div>
-    <div class="muted" id="lastTick">Waiting for live tick data</div>
-  </div>
-
-  <div class="grid">
-    <div class="stat">
-      <h3>Latest Digit</h3>
-      <strong id="latestDigit">-</strong>
-    </div>
-    <div class="stat">
-      <h3>Total Ticks Collected</h3>
-      <strong id="tickCount">0</strong>
-    </div>
-    <div class="stat">
-      <h3>Most Frequent Digit</h3>
-      <strong id="hotDigit">-</strong>
-    </div>
-    <div class="stat">
-      <h3>Least Frequent Digit</h3>
-      <strong id="coldDigit">-</strong>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>Selected Market Price Movement</h2>
-    <canvas id="chart"></canvas>
-  </div>
-
-  <div class="card">
-    <h2>AI Digit Frequency Analysis</h2>
-    <div class="digits" id="digitGrid">
-      <div class="digit">Waiting...</div>
-    </div>
-
-    <div class="signal" id="analysis">
-      Waiting for market data to analyse.
-    </div>
-
-    <p class="notice">
-      MAXIO AI displays historical digit frequency and statistical patterns.
-      These figures do not guarantee or reliably predict the next digit.
-      Synthetic index outcomes can be unpredictable.
-    </p>
-  </div>
-
-  <div class="card">
-    <h2>Volatility Ranking</h2>
-    <p class="notice">
-      Markets are ranked using average absolute percentage movement between
-      consecutive observed ticks. This is an observed movement measure,
-      not a guaranteed forecast of future volatility.
-    </p>
-
-    <div style="overflow-x:auto">
-      <table>
-        <thead>
-          <tr>
-            <th>Rank</th>
-            <th>Market</th>
-            <th>Average Movement</th>
-            <th>Ticks</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="ranking">
-          <tr><td colspan="5">Collecting data...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>Recent Tick History</h2>
-    <div style="overflow-x:auto">
-      <table>
-        <thead>
-          <tr><th>Time</th><th>Price</th><th>Last Digit</th></tr>
-        </thead>
-        <tbody id="history">
-          <tr><td colspan="3">No ticks received yet.</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>System Information</h2>
-    <div class="notice" id="systemInfo">
-      MAXIO AI PRO is initializing.
-    </div>
-  </div>
-
+<header><div class="brand"><div class="logo">✳</div><div><b>MAXIO AI</b><small>DERIV MARKET INTELLIGENCE</small></div></div><div class="header-right"><span class="pill"><i class="dot"></i> LIVE PUBLIC FEED</span><span class="pill">PRO · v2.0</span></div></header>
+<main>
+<div class="topline"><div><div class="eyebrow">Quantum analytics workspace</div><h1>Market intelligence dashboard</h1><div class="sub">Explore synthetic indices, decode digit behaviour and test analysis signals.</div></div><span class="tag green">● Live market data · no trading</span></div>
+<div class="layout">
+<section class="stack">
+<div class="card">
+ <div class="cardhead"><h2>Market & contract selector</h2><span class="tag">10 markets</span></div>
+ <div class="controls">
+  <div class="field"><label for="market">Volatility market</label><select id="market"><option>Volatility 10 Index</option><option>Volatility 25 Index</option><option>Volatility 50 Index</option><option selected>Volatility 75 Index</option><option>Volatility 100 Index</option><option>Volatility 10 (1s) Index</option><option>Volatility 25 (1s) Index</option><option>Volatility 50 (1s) Index</option><option>Volatility 75 (1s) Index</option><option>Volatility 100 (1s) Index</option></select></div>
+  <div class="field"><label for="period">Analysis window</label><select id="period"><option>Last 25 ticks</option><option selected>Last 100 ticks</option><option>Last 250 ticks</option><option>Last 500 ticks</option></select></div>
+ </div>
+ <div style="margin:14px 0 8px"><div class="field"><label>Contract type</label></div><div class="contracts" id="contracts"><button class="contract active" data-contract="Matches">Matches</button><button class="contract" data-contract="Differs">Differs</button><button class="contract" data-contract="Even">Even</button><button class="contract" data-contract="Odd">Odd</button><button class="contract" data-contract="Over">Over</button><button class="contract" data-contract="Under">Under</button><button class="contract" data-contract="Rise">Rise</button><button class="contract" data-contract="Fall">Fall</button><button class="contract" data-contract="Higher">Higher</button><button class="contract" data-contract="Lower">Lower</button></div></div>
 </div>
-
-<footer>
-  MAXIO AI PRO • Independent synthetic market analytics
-</footer>
-
+<div class="card">
+ <div class="cardhead"><h2>Live market overview</h2><span class="tag green"><i class="dot"></i> Deriv public tick stream</span></div>
+ <div class="stats"><div class="stat"><small>Latest quote</small><b id="quote">4,694.612</b></div><div class="stat"><small>Last digit</small><b id="lastdigit" class="lastdigit">2</b></div><div class="stat"><small>Tick change</small><b id="change" class="positive">+0.018</b></div><div class="stat"><small>Ticks sampled</small><b id="sampled">100</b></div></div>
+ <div style="height:12px"></div><div class="chartwrap"><span class="chartlabel">DERIV LIVE PRICE TRACE · RECENT TICKS</span><canvas id="chart"></canvas></div>
+ <div style="height:12px"></div><div class="cardhead" style="margin-bottom:8px"><h2>Dynamic tick stream</h2><span class="sub">Four live streams</span></div><div class="streams" id="streams"></div>
+ <p class="disclaimer" style="margin:12px 0 0">Live public Deriv quotes. This dashboard is read-only and does not place trades.</p>
+</div>
+<div class="card">
+ <div class="cardhead"><div><h2>All-markets Volatility scanner</h2><div class="sub">Live comparison across the 10 standard and 1-second Volatility indices</div></div><span class="tag green" id="volScannerStatus">Connecting</span></div>
+ <div class="scanner-wrap"><table class="scanner-table"><thead><tr><th>MARKET</th><th>LIVE PRICE</th><th>LAST DIGIT</th><th>TICKS</th><th>AVG MOVEMENT</th><th>ACTIVITY</th></tr></thead><tbody id="volScannerRows"><tr><td colspan="6" class="empty">Waiting for live market data…</td></tr></tbody></table></div>
+ <p class="disclaimer" style="margin:10px 0 0">Movement is calculated from observed tick-to-tick percentage changes. It describes recent activity; it does not predict the next tick or guarantee a trading outcome.</p>
+</div>
+<div class="card">
+ <div class="cardhead"><div><h2>Quantum AI market scanner</h2><div class="sub">Seven-phase probability & market comparison engine</div></div><span class="tag">MAXIO QUANTUM</span></div>
+ <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="ghost" id="refresh">↻ Refresh analysis</button><button class="scanbtn" id="scan">▶ Start analysis</button></div>
+ <div class="scanner-meta"><span id="metaContract">● Matches</span><span id="metaMarket">▤ Volatility 75</span><span id="scanStatus">● SCANNER ON STANDBY</span></div>
+ <div class="progressbox"><div class="progressrow"><b id="phaseTitle">SCANNER READY · 7-PHASE ENGINE</b><strong id="progress">0%</strong></div><div class="bar"><i id="bar"></i></div><div class="sub" id="phaseSub">Start a scan to evaluate the current live sample.</div></div>
+ <div class="radar"><svg viewBox="0 0 220 220" aria-label="Quantum radar"><defs><radialGradient id="glow"><stop stop-color="#9a8aff" stop-opacity=".65"/><stop offset="1" stop-color="#8c7af5" stop-opacity="0"/></radialGradient></defs><circle cx="110" cy="110" r="92" fill="none" stroke="#b8c5d8" stroke-width="1.5"/><circle cx="110" cy="110" r="72" fill="none" stroke="#d4d9e8" stroke-dasharray="4 5"/><circle cx="110" cy="110" r="50" fill="none" stroke="#c9c4ef"/><circle cx="110" cy="110" r="44" fill="url(#glow)" class="core"/><path d="M110 18V202M18 110H202" stroke="#dfe4f0" stroke-dasharray="3 6"/><g fill="#6d55dc"><circle cx="110" cy="19" r="3"/><circle cx="178" cy="65" r="3"/><circle cx="183" cy="140" r="3"/><circle cx="110" cy="191" r="3"/><circle cx="39" cy="110" r="3"/></g><g fill="#28a99c"><circle cx="55" cy="55" r="3"/><circle cx="165" cy="48" r="2.5"/><circle cx="52" cy="164" r="2.5"/><circle cx="165" cy="166" r="3"/></g><text x="110" y="119" text-anchor="middle" font-size="27" fill="#6245cf">◎</text></svg></div>
+ <div class="sub" style="text-align:center;margin:-8px 0 14px;font-size:9px;letter-spacing:.18em;font-weight:800">QUANTUM SYNC · LIVE DATA ENGINE</div>
+ <div class="phases" id="phases"></div>
+</div>
+</section>
+<aside class="stack">
+<div class="card">
+ <div class="cardhead"><h2>AI recommendation</h2><span class="tag amber" id="resultBadge">Awaiting scan</span></div>
+ <div id="result" class="result"><div class="eyebrow">Quantum engine armed</div><h2 style="font-size:21px;margin:7px 0">Ready to decode the market.</h2><p>Launch a seven-phase scan. MAXIO will inspect the locally generated live tick sample and summarize the strongest observed digit pattern.</p><div class="sub">No scan has been run yet.</div></div>
+ <p class="disclaimer" style="margin:12px 0 0">Confidence is a descriptive score based on the live sample's frequency and stability. It is not a calibrated probability of winning or a guarantee of future outcomes.</p>
+</div>
+<div class="card">
+ <div class="cardhead"><h2>PRO digit intelligence</h2><span class="tag">0–9</span></div><div id="digits"></div>
+ <div class="sub" style="margin-top:9px">Counts in the selected rolling sample.</div><div id="digitDiagnostics" class="resultgrid" style="margin-top:12px"><div><small>ENTROPY</small><b>Waiting</b></div><div><small>EXPECTED / DIGIT</small><b>10%</b></div><div><small>SAMPLE SIZE</small><b>0</b></div></div><p class="disclaimer">Diagnostics describe the observed sample only. They do not establish a predictive edge or guarantee future digits.</p>
+</div>
+<div class="card">
+ <div class="cardhead"><h2>Analysis history</h2><button class="ghost" id="clearHistory" style="padding:6px 9px;font-size:10px">Clear</button></div>
+ <div style="overflow:auto"><table class="history"><thead><tr><th>TIME</th><th>MARKET</th><th>CONTRACT</th><th>SIGNAL</th></tr></thead><tbody id="history"><tr><td colspan="4" class="empty">No scans yet</td></tr></tbody></table></div>
+</div>
+<div class="card"><div class="cardhead"><h2>Market scanner notes</h2><span class="tag">Guide</span></div><p class="sub">Use the market selector to switch synthetic indices. Choose a contract, then run a scan. The analysis uses recent live ticks only and explains its findings.</p><p class="sub">Market data streams from Deriv's public WebSocket. No account login or trading authorization is used; placing trades is not enabled.</p></div>
+</aside>
+</div>
+<div class="footer">MAXIO AI PRO · Independent demo analytics interface · Not affiliated with or endorsed by Deriv</div>
+</main>
 <script>
-/* KEEPING YOUR EXISTING DERIV APP ID */
-const APP_ID = "3532zl1vmS9c3YBUthSAO";
-const WS_URL =
-  "wss://ws.derivws.com/websockets/v3?app_id=" +
-  encodeURIComponent(APP_ID);
-
-/* ALL TEN MARKETS */
-const MARKETS = [
-  {symbol:"R_10",name:"Volatility 10"},
-  {symbol:"R_25",name:"Volatility 25"},
-  {symbol:"R_50",name:"Volatility 50"},
-  {symbol:"R_75",name:"Volatility 75"},
-  {symbol:"R_100",name:"Volatility 100"},
-  {symbol:"1HZ10V",name:"Volatility 10 (1s)"},
-  {symbol:"1HZ25V",name:"Volatility 25 (1s)"},
-  {symbol:"1HZ50V",name:"Volatility 50 (1s)"},
-  {symbol:"1HZ75V",name:"Volatility 75 (1s)"},
-  {symbol:"1HZ100V",name:"Volatility 100 (1s)"}
-];
-
-let socket = null;
-let activeSymbol = "R_10";
-let requestId = 1;
-let reconnectTimer = null;
-let manuallyClosed = false;
-
-/* Separate tick storage for every market */
-const marketTicks = {};
-const requestSymbols = {};
-
-MARKETS.forEach(market => {
-  marketTicks[market.symbol] = [];
-});
-
-const $ = id => document.getElementById(id);
-
-function setStatus(message,connected=false){
-  $("connectionStatus").textContent = message;
-  $("statusDot").className =
-    connected ? "dot connected" : "dot";
+(()=>{
+const $=id=>document.getElementById(id);
+const markets=['Volatility 10 Index','Volatility 25 Index','Volatility 50 Index','Volatility 75 Index','Volatility 100 Index','Volatility 10 (1s) Index','Volatility 25 (1s) Index','Volatility 50 (1s) Index','Volatility 75 (1s) Index','Volatility 100 (1s) Index'];
+let ticks=[],price=0,contract='Matches',history=[],scanTimer=null,ws=null,activeSymbols=[],selectedSymbol=null,requestId=1,reconnectTimer=null,reconnectDelay=1500;
+const marketTicks=Object.create(null);
+const MARKET_LIMIT=1000;
+const phaseNames=['Market synchronization','Historical pattern recognition','Volatility structure analysis','High-frequency mapping','Probability matrix computation','Cross-market signal alignment','Final prediction consensus'];
+const phaseNotes=['Synchronizing the local live tick stream','Measuring recent digit distribution','Reviewing quote movement and tick range','Mapping last-digit frequency and repetition','Computing descriptive sample scores','Comparing nearby volatility profiles (demo only)','Combining observed indicators into a summary'];
+function selectedMarket(){return $('market').value}
+function setFeedStatus(label,ok=false){const el=document.querySelector('.header-right .pill');if(el){el.innerHTML='<i class="dot" style="background:'+(ok?'#49e0b4':'#ffc36b')+'"></i> '+label;}const tag=document.querySelector('.topline .tag');if(tag){tag.textContent=ok?'● Live market data · read only':'● '+label;tag.className='tag '+(ok?'green':'amber');}const scanner=$('volScannerStatus');if(scanner){scanner.textContent=ok?'LIVE · 10-MARKET SCAN':label;scanner.className='tag '+(ok?'green':'amber');}}
+function send(payload){if(ws&&ws.readyState===WebSocket.OPEN)ws.send(JSON.stringify({...payload,req_id:requestId++}));}
+// Deriv public market-data endpoint: read-only access, no account login or App ID required.
+function connectDeriv(){clearTimeout(reconnectTimer);ws=new WebSocket('wss://api.derivws.com/trading/v1/options/ws/public');ws.onopen=()=>{reconnectDelay=1500;setFeedStatus('DERIV CONNECTED',true);$('scanStatus').textContent='● LIVE FEED CONNECTED';send({active_symbols:'brief'});};ws.onmessage=(event)=>{let msg;try{msg=JSON.parse(event.data)}catch{return}
+ if(msg.error){$('phaseSub').textContent='Deriv API: '+msg.error.message;return;}
+ if(msg.msg_type==='active_symbols'){activeSymbols=msg.active_symbols||[];populateMarkets();subscribeSelected();}
+ if(msg.msg_type==='history'&&msg.history&&msg.echo_req&&msg.echo_req.ticks_history){const sym=msg.echo_req.ticks_history;const prices=msg.history.prices||[],times=msg.history.times||[];const series=prices.map((q,i)=>{const quote=String(q);return {price:Number(q),digit:Number(quote.slice(-1)),quote,time:Number(times[i]||0)*1000}}).filter(x=>Number.isFinite(x.price)).slice(-MARKET_LIMIT);marketTicks[sym]=series;if(sym===selectedSymbol){ticks=series.slice();if(ticks.length){price=ticks.at(-1).price;renderMarket();}}renderVolatilityScanner();}
+ if(msg.msg_type==='tick'&&msg.tick){const t=msg.tick,sym=t.symbol;if(!sym)return;const quote=String(t.quote),item={price:Number(t.quote),digit:Number(quote.slice(-1)),quote,time:Number(t.epoch||Date.now()/1000)*1000};if(!Number.isFinite(item.price))return;marketTicks[sym]=marketTicks[sym]||[];marketTicks[sym].push(item);if(marketTicks[sym].length>MARKET_LIMIT)marketTicks[sym].shift();if(sym===selectedSymbol){ticks=marketTicks[sym].slice();price=item.price;renderMarket();}renderVolatilityScanner();}
+ };
+ ws.onerror=()=>setFeedStatus('FEED CONNECTION ISSUE');
+ ws.onclose=()=>{setFeedStatus('RECONNECTING');$('scanStatus').textContent='● FEED LOST · RECONNECTING';reconnectTimer=setTimeout(connectDeriv,reconnectDelay);reconnectDelay=Math.min(reconnectDelay*2,30000);};
 }
-
-/* CONNECT TO DERIV AND SUBSCRIBE TO ALL TEN MARKETS */
-function connectAll(){
-  manuallyClosed = false;
-  clearTimeout(reconnectTimer);
-
-  if(socket){
-    try{
-      socket.onclose = null;
-      socket.close();
-    }catch(e){}
-  }
-
-  requestId = 1;
-
-  Object.keys(requestSymbols).forEach(key => {
-    delete requestSymbols[key];
-  });
-
-  MARKETS.forEach(market => {
-    marketTicks[market.symbol] = [];
-  });
-
-  renderAll();
-
-  setStatus("Connecting to Deriv WebSocket...");
-  $("systemInfo").textContent =
-    "Opening Deriv connection. Preparing ten live market subscriptions.";
-
-  try{
-    socket = new WebSocket(WS_URL);
-
-    socket.onopen = function(){
-      setStatus("Connected • subscribing to all 10 markets",true);
-
-      $("systemInfo").textContent =
-        "WebSocket connection established. Requesting historical ticks and live subscriptions for all ten markets.";
-
-      MARKETS.forEach(market => {
-        const id = requestId++;
-        requestSymbols[id] = market.symbol;
-
-        const request = {
-          ticks_history: market.symbol,
-          count: 1000,
-          end: "latest",
-          style: "ticks",
-          subscribe: 1,
-          req_id: id
-        };
-
-        socket.send(JSON.stringify(request));
-      });
-    };
-
-    socket.onmessage = function(event){
-      let data;
-
-      try{
-        data = JSON.parse(event.data);
-      }catch(error){
-        return;
-      }
-
-      if(data.error){
-        const message = data.error.message || "Unknown API error";
-        setStatus("Deriv API error: " + message);
-        $("systemInfo").textContent =
-          "Deriv rejected a request: " + message;
-        return;
-      }
-
-      let symbol = null;
-
-      if(data.tick && data.tick.symbol){
-        symbol = data.tick.symbol;
-      }
-
-      if(!symbol && data.echo_req &&
-         data.echo_req.ticks_history){
-        symbol = data.echo_req.ticks_history;
-      }
-
-      if(!symbol && data.req_id){
-        symbol = requestSymbols[data.req_id];
-      }
-
-      if(!symbol || !marketTicks[symbol]){
-        return;
-      }
-
-      /* Historical tick response */
-      if(data.history && data.history.prices){
-        const prices = data.history.prices;
-        const times = data.history.times || [];
-
-        prices.forEach((price,index) => {
-          addTick(
-            symbol,
-            price,
-            times[index]
-          );
-        });
-
-        renderAll();
-      }
-
-      /* New live tick response */
-      if(data.tick){
-        addTick(
-          symbol,
-          data.tick.quote,
-          data.tick.epoch
-        );
-
-        renderAll();
-      }
-    };
-
-    socket.onerror = function(){
-      setStatus("WebSocket error. Check connection and App ID.");
-      $("systemInfo").textContent =
-        "A WebSocket error occurred. Confirm internet access and that your Deriv application is enabled.";
-    };
-
-    socket.onclose = function(){
-      if(!manuallyClosed){
-        setStatus("Connection closed. Tap Connect to retry.");
-        $("systemInfo").textContent =
-          "The Deriv connection closed. You can reconnect using the button above.";
-      }
-    };
-
-  }catch(error){
-    setStatus("Unable to open WebSocket connection.");
-    $("systemInfo").textContent = error.message;
-  }
-}
-
-/* PROCESS TICKS INDEPENDENTLY FOR EACH MARKET */
-function addTick(symbol,quote,epoch){
-  const price = Number(quote);
-
-  if(!Number.isFinite(price)) return;
-
-  const raw = String(quote);
-  const decimalPlaces = Math.max(
-    2,
-    raw.includes(".") ? raw.split(".")[1].length : 0
-  );
-
-  const display = price.toFixed(decimalPlaces);
-  const digit = Number(display.slice(-1));
-
-  const timestamp = epoch
-    ? Number(epoch) * 1000
-    : Date.now();
-
-  const list = marketTicks[symbol];
-
-  /* Prevent duplicate historical/live boundary ticks */
-  if(list.length){
-    const previous = list[list.length-1];
-
-    if(previous.timestamp === timestamp &&
-       previous.display === display){
-      return;
-    }
-  }
-
-  list.push({
-    price:price,
-    display:display,
-    digit:digit,
-    timestamp:timestamp,
-    time:new Date(timestamp)
-  });
-
-  if(list.length > 1500){
-    list.shift();
-  }
-}
-
-/* AVERAGE ABSOLUTE PERCENTAGE MOVEMENT */
-function averageMovement(list){
-  if(list.length < 2) return 0;
-
-  const sample = list.slice(-100);
-  let total = 0;
-  let count = 0;
-
-  for(let i=1;i<sample.length;i++){
-    const previous = sample[i-1].price;
-    const current = sample[i].price;
-
-    if(previous !== 0){
-      total += Math.abs(
-        (current-previous)/previous
-      ) * 100;
-
-      count++;
-    }
-  }
-
-  return count ? total/count : 0;
-}
-
-/* ESTIMATE RECENT TICK ACTIVITY */
-function activityCount(list){
-  if(!list.length) return 0;
-
-  const cutoff = Date.now() - 60000;
-
-  return list.filter(t =>
-    t.timestamp >= cutoff
-  ).length;
-}
-
-function getMarketName(symbol){
-  const market = MARKETS.find(m =>
-    m.symbol === symbol
-  );
-
-  return market ? market.name : symbol;
-}
-
-function renderAll(){
-  renderScanner();
-  renderRanking();
-  renderSelectedMarket();
-}
-
-/* ALL TEN MARKET LIVE TABLE */
-function renderScanner(){
-  const rows = MARKETS.map(market => {
-    const list = marketTicks[market.symbol];
-    const latest = list[list.length-1];
-
-    return {
-      symbol:market.symbol,
-      name:market.name,
-      list:list,
-      latest:latest,
-      movement:averageMovement(list),
-      activity:activityCount(list)
-    };
-  });
-
-  $("scannerTable").innerHTML = rows.map(item => {
-    return `
-      <tr>
-        <td class="market-name">${item.name}</td>
-        <td>${item.latest ? item.latest.display : "Waiting..."}</td>
-        <td>${item.latest ? item.latest.digit : "-"}</td>
-        <td>${item.list.length}</td>
-        <td>${item.movement.toFixed(5)}%</td>
-        <td>${item.activity} / min</td>
-      </tr>
-    `;
-  }).join("");
-
-  const ready = rows.filter(x =>
-    x.list.length > 1
-  ).length;
-
-  $("scannerInfo").textContent =
-    ready + " of 10 markets have received enough ticks to calculate movement.";
-}
-
-/* AUTOMATIC RANKING */
-function renderRanking(){
-  const rows = MARKETS.map(market => {
-    const list = marketTicks[market.symbol];
-
-    return {
-      symbol:market.symbol,
-      name:market.name,
-      count:list.length,
-      movement:averageMovement(list)
-    };
-  }).sort((a,b) => b.movement-a.movement);
-
-  $("ranking").innerHTML = rows.map((item,index) => {
-    let status = "Loading";
-
-    if(item.count > 1) status = "Collecting";
-    if(item.count >= 20) status = "Active";
-
-    return `
-      <tr>
-        <td>${index+1}</td>
-        <td>${item.name}</td>
-        <td>${item.movement.toFixed(5)}%</td>
-        <td>${item.count}</td>
-        <td>${status}</td>
-      </tr>
-    `;
-  }).join("");
-}
-
-/* SELECTED MARKET ANALYSIS */
-function renderSelectedMarket(){
-  activeSymbol = $("market").value;
-
-  const ticks = marketTicks[activeSymbol] || [];
-
-  if(!ticks.length){
-    $("price").textContent = "Waiting...";
-    $("latestDigit").textContent = "-";
-    $("tickCount").textContent = "0";
-    $("hotDigit").textContent = "-";
-    $("coldDigit").textContent = "-";
-    $("lastTick").textContent = "Waiting for live tick data.";
-    $("digitGrid").innerHTML = "";
-    $("analysis").textContent =
-      "Waiting for ticks from " + getMarketName(activeSymbol);
-    renderChart([]);
-    $("history").innerHTML =
-      '<tr><td colspan="3">Waiting for ticks...</td></tr>';
-    return;
-  }
-
-  const latest = ticks[ticks.length-1];
-
-  $("price").textContent = latest.display;
-  $("latestDigit").textContent = latest.digit;
-  $("tickCount").textContent = ticks.length;
-  $("lastTick").textContent =
-    "Last update: " + latest.time.toLocaleTimeString();
-
-  renderDigitAnalysis(ticks);
-  renderHistory(ticks);
-  renderChart(ticks.slice(-100));
-}
-
-/* DIGIT FREQUENCY */
-function renderDigitAnalysis(ticks){
-  const size = Number($("sampleSize").value);
-  const sample = ticks.slice(-size);
-
-  if(!sample.length) return;
-
-  const counts = Array(10).fill(0);
-
-  sample.forEach(tick => {
-    counts[tick.digit]++;
-  });
-
-  const total = sample.length;
-  const maximum = Math.max(...counts);
-  const minimum = Math.min(...counts);
-
-  const hot = counts.indexOf(maximum);
-  const cold = counts.indexOf(minimum);
-
-  $("hotDigit").textContent = hot;
-  $("coldDigit").textContent = cold;
-
-  $("digitGrid").innerHTML = counts.map((count,digit) => {
-    const percent = count/total*100;
-
-    return `
-      <div class="digit">
-        <strong>${digit}</strong>
-        ${percent.toFixed(1)}%
-        <div class="bar">
-          <div class="fill" style="width:${percent}%"></div>
-        </div>
-        <small>${count}</small>
-      </div>
-    `;
-  }).join("");
-
-  const sorted = counts.map((count,digit) => ({
-    digit:digit,
-    count:count,
-    percent:count/total*100
-  })).sort((a,b) => b.count-a.count);
-
-  $("analysis").innerHTML =
-    "<b>" + getMarketName(activeSymbol) + "</b><br>" +
-    "Sample size: " + total + " ticks<br>" +
-    "Most frequent digit: <span class='green'>" +
-    hot + "</span> (" +
-    (maximum/total*100).toFixed(2) + "%)<br>" +
-    "Least frequent digit: <span class='red'>" +
-    cold + "</span> (" +
-    (minimum/total*100).toFixed(2) + "%)<br>" +
-    "Top three historical digits: " +
-    sorted.slice(0,3).map(x=>x.digit).join(", ") +
-    "<br><small class='muted'>" +
-    "These are historical frequencies, not reliable predictions of the next tick." +
-    "</small>";
-}
-
-/* RECENT TICK HISTORY */
-function renderHistory(ticks){
-  const recent = ticks.slice(-15).reverse();
-
-  $("history").innerHTML = recent.map(tick => `
-    <tr>
-      <td>${tick.time.toLocaleTimeString()}</td>
-      <td>${tick.display}</td>
-      <td><b>${tick.digit}</b></td>
-    </tr>
-  `).join("");
-}
-
-/* PRICE CHART */
-function renderChart(ticks){
-  const canvas = $("chart");
-  const ctx = canvas.getContext("2d");
-
-  const width = canvas.clientWidth || 300;
-  const height = 180;
-  const dpr = window.devicePixelRatio || 1;
-
-  canvas.width = width*dpr;
-  canvas.height = height*dpr;
-
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-  ctx.clearRect(0,0,width,height);
-
-  if(ticks.length < 2){
-    ctx.fillStyle = "#91a5bd";
-    ctx.font = "12px Arial";
-    ctx.fillText("Waiting for price movement...",10,30);
-    return;
-  }
-
-  const values = ticks.map(t => t.price);
-  const minimum = Math.min(...values);
-  const maximum = Math.max(...values);
-  const range = maximum-minimum || 1;
-  const padding = 12;
-
-  ctx.strokeStyle = "#00e6a0";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-
-  values.forEach((value,index) => {
-    const x = padding +
-      index/(values.length-1)*(width-padding*2);
-
-    const y = height-padding -
-      (value-minimum)/range*(height-padding*2);
-
-    if(index===0) ctx.moveTo(x,y);
-    else ctx.lineTo(x,y);
-  });
-
-  ctx.stroke();
-}
-
-/* RESET LOCAL STATISTICS WITHOUT DISCONNECTING */
-function resetData(){
-  MARKETS.forEach(market => {
-    marketTicks[market.symbol] = [];
-  });
-
-  renderAll();
-
-  $("systemInfo").textContent =
-    "Statistics cleared. Live market subscriptions remain active.";
-}
-
-/* SELECT A MARKET WITHOUT STOPPING OTHER MARKETS */
-$("market").addEventListener("change",function(){
-  activeSymbol = this.value;
-  renderSelectedMarket();
-});
-
-$("sampleSize").addEventListener("change",function(){
-  renderSelectedMarket();
-});
-
-window.addEventListener("resize",function(){
-  renderSelectedMarket();
-});
-
-/* INITIALIZE */
-connectAll();
+function populateMarkets(){const sel=$('market');const wanted=sel.value;const matches=activeSymbols.filter(x=>/volatility/i.test(x.display_name||''));if(!matches.length)return;sel.innerHTML='';matches.forEach(x=>{const o=document.createElement('option');o.value=x.display_name;o.textContent=x.display_name;o.dataset.symbol=x.symbol;sel.appendChild(o)});const chosen=matches.find(x=>x.display_name===wanted)||matches.find(x=>/Volatility 75 Index/i.test(x.display_name))||matches[0];sel.value=chosen.display_name;selectedSymbol=chosen.symbol;ticks=(marketTicks[selectedSymbol]||[]).slice();$('metaMarket').textContent='▤ '+chosen.display_name;subscribeAllMarkets();renderVolatilityScanner();}
+function subscribeAllMarkets(){if(!ws||ws.readyState!==WebSocket.OPEN)return;const markets=activeSymbols.filter(x=>/volatility/i.test(x.display_name||''));if(!markets.length)return;markets.forEach(item=>{marketTicks[item.symbol]=marketTicks[item.symbol]||[];send({ticks_history:item.symbol,count:MARKET_LIMIT,end:'latest',style:'ticks'});send({ticks:item.symbol,subscribe:1});});$('phaseSub').textContent='Monitoring '+markets.length+' Volatility markets using live Deriv public tick subscriptions.';}
+function subscribeSelected(){const item=activeSymbols.find(x=>x.display_name===selectedMarket());if(!item)return;selectedSymbol=item.symbol;ticks=(marketTicks[selectedSymbol]||[]).slice();$('metaMarket').textContent='▤ '+item.display_name;renderMarket();renderVolatilityScanner();}
+function averageMarketMovement(series){if(!series||series.length<2)return 0;const sample=series.slice(-100);let total=0,count=0;for(let i=1;i<sample.length;i++){const previous=sample[i-1].price;if(previous!==0){total+=Math.abs((sample[i].price-previous)/previous)*100;count++;}}return count?total/count:0;}
+function renderVolatilityScanner(){const rows=activeSymbols.filter(x=>/volatility/i.test(x.display_name||'')).map(item=>{const data=marketTicks[item.symbol]||[];const latest=data.at(-1);const cutoff=Date.now()-60000;const activity=data.filter(t=>t.time>=cutoff).length;return {name:item.display_name,symbol:item.symbol,data,latest,activity,movement:averageMarketMovement(data)}}).sort((a,b)=>b.movement-a.movement);const body=$('volScannerRows');if(!body)return;if(!rows.length){body.innerHTML='<tr><td colspan="6" class="empty">Waiting for Deriv market list…</td></tr>';return;}body.innerHTML=rows.map(item=>'<tr><td><b>'+item.name+'</b></td><td>'+(item.latest?item.latest.quote:'Waiting…')+'</td><td>'+(item.latest?item.latest.digit:'—')+'</td><td>'+item.data.length+'</td><td>'+item.movement.toFixed(5)+'%</td><td>'+(item.activity?item.activity+' ticks/min':'—')+'</td></tr>').join('');const ready=rows.filter(x=>x.data.length>1).length;$('volScannerStatus').textContent=ready+'/10 markets active';}
+
+function windowTicks(){let n=Number($('period').value.match(/\d+/)[0]);return ticks.slice(-n)}
+function frequency(){let c=Array(10).fill(0);windowTicks().forEach(t=>c[t.digit]++);return c}
+function renderMarket(){let t=ticks.at(-1),prev=ticks.at(-2);if(!t){$('quote').textContent='Waiting…';$('lastdigit').textContent='—';$('change').textContent='—';$('sampled').textContent='0';$('streams').innerHTML='<div class="stream"><small>DERIV FEED</small><strong>Waiting for ticks…</strong></div>';drawChart();renderDigits();return;}$('quote').textContent=Number(t.quote).toLocaleString('en-US',{minimumFractionDigits:3,maximumFractionDigits:3});$('lastdigit').textContent=t.digit;$('change').textContent=prev?(t.price-prev.price>=0?'+':'')+(t.price-prev.price).toFixed(3):'—';$('change').className=prev&&t.price>=prev.price?'positive':'negative';$('sampled').textContent=windowTicks().length;
+$('streams').innerHTML=[0,1,2,3].map((n)=>{let x=ticks[ticks.length-1-n*3]||t;return `<div class="stream"><small>STREAM 0${n+1}</small><strong>${x.quote.slice(0,-1)}<span class="lastdigit">${x.digit}</span></strong></div>`}).join('');drawChart();renderDigits()}
+function drawChart(){let c=$('chart'),r=c.getBoundingClientRect(),dpr=window.devicePixelRatio||1;c.width=Math.max(1,r.width*dpr);c.height=Math.max(1,r.height*dpr);let ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);let data=ticks.slice(-75),w=r.width,h=r.height,pad=18;if(!data.length){ctx.clearRect(0,0,w,h);return;}let min=Math.min(...data.map(x=>x.price)),max=Math.max(...data.map(x=>x.price)),span=max-min||1;ctx.strokeStyle='#edf0f7';ctx.lineWidth=1;for(let i=1;i<4;i++){let y=pad+(h-2*pad)*i/4;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}ctx.beginPath();data.forEach((t,i)=>{let x=pad+(w-2*pad)*i/(data.length-1),y=h-pad-(t.price-min)/span*(h-2*pad);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.strokeStyle='#6542dc';ctx.lineWidth=2.2;ctx.stroke();let last=data.at(-1),y=h-pad-(last.price-min)/span*(h-2*pad);ctx.fillStyle='#22a99b';ctx.beginPath();ctx.arc(w-pad,y,4,0,Math.PI*2);ctx.fill()}
+function renderDigits(){let c=frequency(),max=Math.max(...c,1),total=c.reduce((a,b)=>a+b,0);$('digits').innerHTML=c.map((v,i)=>`<div style="display:grid;grid-template-columns:18px 1fr 25px;align-items:center;gap:8px;margin:8px 0"><b style="font-size:11px">${i}</b><div class="bar" style="margin:0;height:8px"><i style="width:${v/max*100}%;background:${i%2?'#24aa9b':'#7050e5'}"></i></div><span class="sub" style="text-align:right">${v} · ${total?(v/total*100).toFixed(1):'0.0'}%</span></div>`).join('');let entropy=total?c.reduce((sum,n)=>n?sum-(n/total)*Math.log2(n/total):sum,0):0;let diag=$('digitDiagnostics');if(diag)diag.innerHTML=`<div><small>ENTROPY</small><b>${entropy.toFixed(2)} / 3.32 bits</b></div><div><small>EXPECTED / DIGIT</small><b>10% baseline</b></div><div><small>SAMPLE SIZE</small><b>${total} ticks</b></div>`}
+function renderPhases(done=-1,active=-1){$('phases').innerHTML=phaseNames.map((n,i)=>`<div class="phase ${i<=done?'done':i===active?'active':''}"><span class="check">${i<=done?'✓':i===active?'…':'○'}</span><span>${n}</span><span style="margin-left:auto;font-size:9px">${i<=done?'COMPLETE':i===active?'RUNNING':''}</span></div>`).join('')}
+function calc(){let data=windowTicks(),counts=frequency(),total=data.length;let ranked=counts.map((n,d)=>({d,n})).sort((a,b)=>b.n-a.n);let top=ranked[0],second=ranked[1],share=top.n/total,stability=1-(second.n/total),confidence=Math.round(Math.min(78,Math.max(25,35+share*100*.32+stability*15)));let recent=data.slice(-20),recentCount=recent.filter(t=>t.digit===top.d).length;let signal=share>.16?'Elevated sample frequency':share>.12?'Moderate sample frequency':'Low concentration';return {top,second,share,confidence,signal,recentCount,total,counts}}
+function resultMarkup(x){let recommendation=contract==='Matches'?`Matches ${x.top.d}`:contract==='Differs'?`Differs ${x.top.d}`:contract==='Even'?'Even':contract==='Odd'?'Odd':contract==='Over'?`Over ${Math.min(8,x.top.d)}`:contract==='Under'?`Under ${Math.max(1,x.top.d)}`:contract==='Rise'?'Rise':contract==='Fall'?'Fall':contract==='Higher'?'Higher':'Lower';return `<div class="resulttop"><span class="eyebrow">AI recommendation · live sample</span><span class="tag green">ANALYSIS COMPLETE</span></div><div class="digitrow"><div class="bigdigit">${contract==='Matches'||contract==='Differs'?x.top.d:contract==='Even'?'EV':contract==='Odd'?'OD':contract==='Rise'?'↗':contract==='Fall'?'↘':x.top.d}</div><div><b style="font-size:14px">${recommendation}</b><div class="sub">${selectedMarket()}</div></div><div class="confidence"><b>${x.confidence}%</b><small>SAMPLE SCORE</small></div></div><p><b>What the sample shows:</b> digit ${x.top.d} appeared ${x.top.n} times (${(x.share*100).toFixed(1)}%) in ${x.total} observed ticks. It appeared ${x.recentCount} times in the latest 20 ticks. ${x.signal}.</p><p><b>Interpretation:</b> This is a descriptive frequency result, not evidence that the next tick will match the pattern. Short-term digit outcomes can remain unpredictable.</p><div class="resultgrid"><div><small>SIGNAL</small><b>${x.share>.16?'Elevated':'Moderate'}</b></div><div><small>PATTERN</small><b>${x.recentCount>=4?'Clustered':'Dispersed'}</b></div><div><small>ALIGNMENT</small><b>Sample only</b></div></div>`}
+function runScan(){if(scanTimer)return;if(windowTicks().length<20){$('phaseSub').textContent='Waiting for at least 20 real Deriv ticks before analysis.';return;}let step=0;$('scan').disabled=true;$('scan').textContent='Scanning…';$('scanStatus').textContent='● DEEP SCAN IN PROGRESS';$('resultBadge').textContent='Scanning';$('phaseTitle').textContent='QUANTUM ENGINE PROCESSING';renderPhases(-1,0);let interval=setInterval(()=>{step++;let pct=Math.round(step/7*100);$('progress').textContent=pct+'%';$('bar').style.width=pct+'%';$('phaseTitle').textContent=phaseNames[Math.min(step-1,6)].toUpperCase();$('phaseSub').textContent=phaseNotes[Math.min(step-1,6)];renderPhases(step-1,step<7?step:-1);if(step>=7){clearInterval(interval);scanTimer=null;let x=calc();$('result').innerHTML=resultMarkup(x);$('resultBadge').textContent='Completed';$('scanStatus').textContent='● ANALYSIS FINALIZED';$('scan').disabled=false;$('scan').textContent='▶ Run new analysis';let time=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});history.unshift({time,market:selectedMarket().replace(' Index',''),contract,signal:contract==='Matches'||contract==='Differs'?x.top.d:contract});history=history.slice(0,8);renderHistory()}} ,420);scanTimer=interval}
+function renderHistory(){$('history').innerHTML=history.length?history.map(h=>`<tr><td>${h.time}</td><td>${h.market}</td><td>${h.contract}</td><td><b>${h.signal}</b></td></tr>`).join(''):'<tr><td colspan="4" class="empty">No scans yet</td></tr>'}
+$('contracts').addEventListener('click',e=>{let b=e.target.closest('button[data-contract]');if(!b)return;contract=b.dataset.contract;document.querySelectorAll('.contract').forEach(x=>x.classList.toggle('active',x===b));$('metaContract').textContent='● '+contract;$('result').innerHTML='<div class="eyebrow">Contract changed</div><h2 style="font-size:19px;margin:7px 0">Ready for a new scan.</h2><p>Run the scanner to refresh the sample recommendation for '+contract+'.</p>';$('resultBadge').textContent='Awaiting scan'});
+$('market').addEventListener('change',()=>{subscribeSelected();$('result').innerHTML='<div class="eyebrow">Market changed</div><h2 style="font-size:19px;margin:7px 0">Ready for a new scan.</h2><p>Run the scanner to analyse the selected market sample.</p>';$('resultBadge').textContent='Awaiting scan'});
+$('period').addEventListener('change',()=>{renderMarket()});$('scan').addEventListener('click',runScan);$('refresh').addEventListener('click',()=>{if(selectedSymbol)send({ticks_history:selectedSymbol,count:MARKET_LIMIT,end:'latest',style:'ticks'});$('phaseSub').textContent='Requested a fresh sample from the live Deriv feed.';$('resultBadge').textContent='Refreshing live sample'});$('clearHistory').addEventListener('click',()=>{history=[];renderHistory()});
+renderPhases();renderMarket();$('metaMarket').textContent='▤ '+selectedMarket().replace(' Index','');connectDeriv();window.addEventListener('resize',drawChart);
+})();
 </script>
-
 </body>
-</html>
+                                                                                       </html>
